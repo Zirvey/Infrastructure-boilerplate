@@ -15,18 +15,22 @@ spec:
       labels:
         app: web-app
     spec:
+      automountServiceAccountToken: false
       containers:
         - name: app
-          image: your-registry/app:latest
+          image: your-registry/app:1.0.0
           ports:
             - containerPort: 3000
+              protocol: TCP
           resources:
             requests:
               memory: "256Mi"
               cpu: "250m"
+              ephemeral-storage: "512Mi"
             limits:
               memory: "512Mi"
               cpu: "500m"
+              ephemeral-storage: "1Gi"
           envFrom:
             - configMapRef:
                 name: app-config
@@ -36,9 +40,31 @@ spec:
               port: 3000
             initialDelaySeconds: 30
             periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
           readinessProbe:
             httpGet:
-              path: /health
+              path: /ready
               port: 3000
             initialDelaySeconds: 5
             periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+            runAsGroup: 1000
+            capabilities:
+              drop:
+                - ALL
+            seccompProfile:
+              type: RuntimeDefault
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
