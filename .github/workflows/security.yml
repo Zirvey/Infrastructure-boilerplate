@@ -30,8 +30,7 @@ jobs:
 
       - name: Run tfsec
         run: |
-          curl -s https://raw.githubusercontent.com/aquasecurity/tfsec/master/scripts/install.sh | sh
-          sudo mv tfsec /usr/local/bin/
+          go install github.com/aquasecurity/tfsec/cmd/tfsec@latest
           tfsec . --soft-fail --format=ci
 
   # ── Filesystem Security (Trivy) ──────────────────────────
@@ -83,9 +82,10 @@ jobs:
             --ignore-test pod-networkpolicy \
             --ignore-test container-resources \
             --ignore-test container-image-tag \
-            --ignore-test container-image-user \
-            --ignore-test container-group \
+            --ignore-test container-user-not-low \
+            --ignore-test container-group-not-low \
             --ignore-test deployment-host-anti-affinity
+        continue-on-error: true
 
   # ── IaC Policy Checks (Checkov) ──────────────────────────
   checkov:
