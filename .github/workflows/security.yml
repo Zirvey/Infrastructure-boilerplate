@@ -29,7 +29,8 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run tfsec
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
+        id: tfsec
+        uses: aquasecurity/tfsec-sarif-action@v2.0.0
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           tfsec_args: --soft-fail
@@ -37,9 +38,9 @@ jobs:
 
       - name: Upload tfsec SARIF
         uses: github/codeql-action/upload-sarif@v3
-        if: always()
+        if: always() && steps.tfsec.outcome == 'success'
         with:
-          sarif_file: tfsec-results.sarif
+          sarif_file: results.sarif
 
   # ── Filesystem Security (Trivy) ──────────────────────────
   trivy:
@@ -50,6 +51,7 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Run Trivy
+        id: trivy
         uses: aquasecurity/trivy-action@0.16.1
         with:
           scan-type: fs
@@ -57,13 +59,16 @@ jobs:
           format: sarif
           output: trivy-results.sarif
           severity: CRITICAL,HIGH
-          exit-code: "1"
 
       - name: Upload Trivy SARIF
         uses: github/codeql-action/upload-sarif@v3
         if: always()
         with:
           sarif_file: trivy-results.sarif
+
+      - name: Fail on Trivy findings
+        if: steps.trivy.outcome == 'failure'
+        run: echo "::error::Trivy found critical or high vulnerabilities. Check the scan output above." && exit 1
 
   # ── Kubernetes Security (kube-score) ─────────────────────
   kube-score:

@@ -82,15 +82,22 @@ jobs:
   docker-lint:
     name: Docker Lint
     runs-on: ubuntu-latest
+    if: hashFiles('**/Dockerfile*') != ''
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Find Dockerfiles
+        id: find
+        run: |
+          files=$(find . -name "Dockerfile*" -not -path "./.git/*" | tr '\n' ' ' | sed 's/ *$//')
+          echo "files=${files}" >> "$GITHUB_OUTPUT"
+          echo "Found: $files"
+
       - name: Run Hadolint
         uses: hadolint/hadolint-action@v3.1.0
         with:
-          dockerfile: Dockerfile
-          recursive: true
+          dockerfile: ${{ steps.find.outputs.files }}
           failure-threshold: error
 
   # ── Secrets Detection ────────────────────────────────────
@@ -104,6 +111,6 @@ jobs:
           fetch-depth: 0
 
       - name: Run Gitleaks
-        uses: gitleaks/gitleaks-action@v2.3.2
+        uses: gitleaks/gitleaks-action@v2.3.5
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

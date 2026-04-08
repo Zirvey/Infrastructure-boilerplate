@@ -10,6 +10,10 @@ on:
     paths:
       - 'terraform/**'
 
+permissions:
+  contents: read
+  id-token: write  # For OIDC to AWS
+
 jobs:
   terraform:
     name: Terraform
@@ -31,8 +35,15 @@ jobs:
         with:
           terraform_version: 1.5.0
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ secrets.AWS_ROLE_ARN }}
+          aws-region: us-east-1
+        continue-on-error: true
+
       - name: Terraform Init
-        run: terraform init
+        run: terraform init -backend=false
 
       - name: Terraform Format
         run: terraform fmt -check
@@ -41,9 +52,9 @@ jobs:
         run: terraform validate
 
       - name: Terraform Plan
-        run: terraform plan
+        run: terraform plan -no-color
         if: github.event_name == 'pull_request'
 
       - name: Terraform Apply
         run: terraform apply -auto-approve
-        if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+        if: github.ref == 'refs/heads/main' && github.event_name == 'push' && secrets.AWS_ROLE_ARN != ''
