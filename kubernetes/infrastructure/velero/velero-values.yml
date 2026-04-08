@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: velero
+  labels:
+    name: velero
+---
+# Velero Helm values for deployment
+# Deploy with: helm install velero vmware-tanzu/velero -n velero -f velero-values.yml
+velero:
+  image:
+    repository: velero/velero
+    tag: v1.13.0
+
+  configuration:
+    provider: aws
+    backupStorageLocation:
+      - name: default
+        provider: aws
+        bucket: your-velero-backup-bucket
+        config:
+          region: us-east-1
+          s3Url: https://s3.amazonaws.com
+          s3ForcePathStyle: "true"
+    volumeSnapshotLocation:
+      - name: default
+        provider: aws
+        config:
+          region: us-east-1
+
+  credentials:
+    secretContents:
+      cloud: |
+        [default]
+        aws_access_key_id=YOUR_ACCESS_KEY
+        aws_secret_access_key=YOUR_SECRET_KEY
+
+  initContainers:
+    - name: velero-plugin-for-aws
+      image: velero/velero-plugin-for-aws:v1.8.0
+      imagePullPolicy: IfNotPresent
+      volumeMounts:
+        - mountPath: /target
+          name: plugins
+
+  deployNodeAgent: true
+  nodeAgent:
+    podVolumePath: /var/lib/kubelet/pods
+
+  resources:
+    requests:
+      memory: "256Mi"
+      cpu: "250m"
+    limits:
+      memory: "512Mi"
+      cpu: "500m"
+
+  metrics:
+    enabled: true
+    scrapeInterval: 30s

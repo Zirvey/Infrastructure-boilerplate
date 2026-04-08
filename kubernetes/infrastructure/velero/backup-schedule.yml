@@ -1,0 +1,49 @@
+# Velero Backup Schedule
+# Creates daily backups of the application namespace at 2:00 AM UTC
+# Retains backups for 30 days
+
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: daily-app-backup
+  namespace: velero
+spec:
+  schedule: "0 2 * * *"
+  template:
+    ttl: "720h"  # 30 days
+    includedNamespaces:
+      - application
+      - application-dev
+      - application-staging
+      - application-prod
+    storageLocation: default
+    snapshotVolumes: true
+    includeClusterResources: true
+
+---
+# Weekly full-cluster backup (Sundays at 3:00 AM UTC)
+apiVersion: velero.io/v1
+kind: Schedule
+metadata:
+  name: weekly-cluster-backup
+  namespace: velero
+spec:
+  schedule: "0 3 * * 0"
+  template:
+    ttl: "2160h"  # 90 days
+    storageLocation: default
+    snapshotVolumes: true
+    includeClusterResources: true
+
+---
+# Manual backup example (run with: kubectl apply -f -)
+# apiVersion: velero.io/v1
+# kind: Backup
+# metadata:
+#   name: manual-backup-$(date +%Y%m%d-%H%M%S)
+#   namespace: velero
+# spec:
+#   includedNamespaces:
+#     - application
+#   storageLocation: default
+#   snapshotVolumes: true

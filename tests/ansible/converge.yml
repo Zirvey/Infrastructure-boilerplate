@@ -1,0 +1,16 @@
+---
+- name: Converge
+  hosts: all
+  become: true
+  tasks:
+    - name: Include the common role
+      ansible.builtin.include_role:
+        name: common
+
+    - name: Include the web role
+      ansible.builtin.include_role:
+        name: web
+
+    - name: Include the db role
+      ansible.builtin.include_role:
+        name: db

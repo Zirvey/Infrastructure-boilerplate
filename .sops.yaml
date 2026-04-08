@@ -1,0 +1,30 @@
+# SOPS configuration for secrets encryption
+# https://github.com/getsops/sops
+#
+# Usage:
+#   Encrypt:  sops -e -i environments/prod/secrets.enc.yml
+#   Decrypt:  sops -d environments/prod/secrets.enc.yml
+#   Edit:     sops environments/prod/secrets.enc.yml
+#
+# Prerequisites:
+#   1. Install SOPS: brew install sops
+#   2. Install age:  brew install age
+#   3. Generate key: age-keygen -o age.key
+#   4. Add public key below
+
+creation_rules:
+  # Production — encrypt with age key
+  - path_regex: environments/prod/.*\.ya?ml$
+    age: "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+  # Staging — encrypt with age key
+  - path_regex: environments/staging/.*\.ya?ml$
+    age: "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+  # Development — encrypt with age key (or leave unencrypted for local dev)
+  - path_regex: environments/dev/.*\.ya?ml$
+    age: "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+  # Generic encrypted files anywhere in the repo
+  - path_regex: .*\.enc\.ya?ml$
+    age: "age1xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"

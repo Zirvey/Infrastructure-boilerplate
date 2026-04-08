@@ -1,0 +1,23 @@
+name: "\U0001F4D6 Documentation"
+description: "Suggest improvements to documentation"
+title: "[Docs]: "
+labels: ["documentation"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Help us improve the documentation!
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: What documentation needs improvement?
+    validations:
+      required: true
+
+  - type: textarea
+    id: suggestion
+    attributes:
+      label: Suggested Changes
+      description: What specific changes would you like to see?

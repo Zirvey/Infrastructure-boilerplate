@@ -1,0 +1,93 @@
+name: "\U0001F41B Bug Report"
+description: "Report a bug or unexpected behavior in the infrastructure"
+title: "[Bug]: "
+labels: ["bug", "triage"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug. Please fill in as much detail as possible.
+
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected Component
+      description: Which component is affected?
+      options:
+        - Terraform
+        - Ansible
+        - Docker
+        - Kubernetes
+        - CI/CD
+        - Monitoring
+        - Scripts
+        - Other
+    validations:
+      required: true
+
+  - type: input
+    id: environment
+    attributes:
+      label: Environment
+      description: Which environment? (dev, staging, prod, local)
+      placeholder: "dev"
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected Behavior
+      description: What should have happened?
+      placeholder: "The Terraform apply should have created 2 EC2 instances..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual Behavior
+      description: What actually happened?
+      placeholder: "Terraform failed with error: ..."
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: Steps to Reproduce
+      description: How can we reproduce this issue?
+      placeholder: |
+        1. Navigate to terraform/environments/dev
+        2. Run terraform init
+        3. Run terraform apply
+        4. See error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: logs
+    attributes:
+      label: Relevant Logs
+      description: Paste any relevant error messages or logs (use code blocks)
+      render: shell
+
+  - type: input
+    id: terraform_version
+    attributes:
+      label: Terraform Version
+      description: Output of terraform version
+      placeholder: "Terraform v1.5.0"
+
+  - type: input
+    id: provider_version
+    attributes:
+      label: Provider Version
+      description: Provider version if applicable (e.g., AWS provider)
+      placeholder: "hashicorp/aws ~> 5.0"
+
+  - type: textarea
+    id: additional
+    attributes:
+      label: Additional Context
+      description: Add any other context, screenshots, or configuration details

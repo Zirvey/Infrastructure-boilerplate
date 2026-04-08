@@ -1,0 +1,28 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: infrastructure-boilerplate
+  namespace: argocd
+spec:
+  description: Platform engineering infrastructure projects
+
+  sourceRepos:
+    - https://github.com/your-org/infrastructure-boilerplate.git
+
+  destinations:
+    - namespace: application-dev
+      server: https://kubernetes.default.svc
+    - namespace: application-staging
+      server: https://kubernetes.default.svc
+    - namespace: application-prod
+      server: https://kubernetes.default.svc
+    - namespace: monitoring
+      server: https://kubernetes.default.svc
+
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

@@ -1,0 +1,17 @@
+name: "\U0001F4DD Blank Issue"
+description: "Open a blank issue for discussions or questions"
+title: ""
+labels: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please provide a clear and concise title for your issue.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: Describe your issue, question, or discussion topic
+    validations:
+      required: true

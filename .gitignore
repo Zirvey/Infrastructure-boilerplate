@@ -1,0 +1,66 @@
+# Terraform state
+*.tfstate
+*.tfstate.*
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+
+# Variables
+*.tfvars
+!example.tfvars
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+.env.*
+
+# Ansible
+*.retry
+.vault_pass
+
+# Logs
+*.log
+
+# SOPS encrypted key
+age.key
+*.key
+
+# SOPS cache
+.sops-cache/
+
+# Security scan reports
+tfsec-results.sarif
+trivy-results.sarif
+checkov-results.sarif
+gitleaks-report.sarif
+
+# k6 test results
+results.json
+*.html
+
+# Rendered Kustomize output
+rendered-*.yaml
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Go
+tests/terraform/go.sum
+tests/terraform/bin/
+
+# Molecule
+.molecule/
+
+# Docker
+*.tar

@@ -1,0 +1,17 @@
+# ansible-lint configuration
+# https://ansible.readthedocs.io/projects/lint/configure/
+
+exclude_paths:
+  - .terraform/
+  - node_modules/
+
+skip_list:
+  - name[template]       # Rule for role name patterns
+  - var-naming[no-role-prefix]
+
+warn_list:
+  - experimental
+  - role-name[path]
+
+profile: production
+use_default_rules: true

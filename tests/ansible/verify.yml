@@ -1,0 +1,27 @@
+---
+- name: Verify
+  hosts: all
+  become: true
+  tasks:
+    - name: Check that common packages are installed
+      ansible.builtin.package:
+        name: "{{ item }}"
+        state: present
+      loop:
+        - curl
+        - wget
+        - vim
+      check_mode: true
+      register: pkg_check
+      failed_when: false
+
+    - name: Check that nginx is installed (web role)
+      ansible.builtin.command: nginx -v
+      register: nginx_version
+      failed_when: false
+      changed_when: false
+
+    - name: Print nginx version
+      ansible.builtin.debug:
+        msg: "{{ nginx_version.stderr }}"
+      when: nginx_version.rc == 0
